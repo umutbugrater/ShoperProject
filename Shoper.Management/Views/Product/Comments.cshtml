@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Shoper.Entities.ProductComment>
+
+@{
+    ViewData["Title"] = "Comments";
+}
+
+<h4>Yorumlar</h4>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CommentId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CommentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Writer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.isVerified)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr id="@item.CommentId" class="@(item.isVerified==true?"bg-success":"bg-danger")">
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Writer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.isVerified)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                 <a href="javascript:void(0);" id="Verify" commentId="@item.CommentId" class="btn btn-success">Onayla</a>
+                 <a href="javascript:void(0);" id="NotVerify" commentId="@item.CommentId" class="btn btn-danger">Onay Verme</a>
+                   
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).on('click', '#Verify', function () {
+        var commentId = $(this).attr("commentId");
+        $.ajax({
+            url: "@Url.Action("VerifyComment")",
+            data: { commentId: commentId },
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                   // $("tr.bg-danger").removeClass("bg-danger");// pasif classı kaldıracak
+                   // $("tr").find('a@Verify').addClass('btn btn-warning');
+                   //$(this).addClass("btn btn-success");// hangi butona tıklanmışsa aktif class
+                    $("tr#" + commentId).addClass("bg-success");
+                    location.reload();
+                }
+            }
+        });
+    });
+    $(document).on('click', '#NotVerify', function () {
+        var commentId = $(this).attr("commentId");
+        $.ajax({
+            url: "@Url.Action("NotVerifyComment")",
+            data: { commentId: commentId },
+            type: "POST",
+            success: function (data) {
+                if (data) {
+                    // $("tr.bg-danger").removeClass("bg-danger");// pasif classı kaldıracak
+                    // $("tr").find('a@Verify').addClass('btn btn-warning');
+                    //$(this).addClass("btn btn-success");// hangi butona tıklanmışsa aktif class
+                    $("tr#" + commentId).addClass("bg-danger");
+                    location.reload();
+                }
+            }
+        });
+    });
+
+</script>
+

@@ -1,0 +1,104 @@
+﻿@using Shoper.Entities
+@model Shoper.Management.Models.ViewModels.Product_Price_Img_VM
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h4>Ürün Düzenleme Formu</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="@Model.Product.ProductId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Product.ProductName" class="control-label"></label>
+                <input asp-for="@Model.Product.ProductName" class="form-control" />
+                <span asp-validation-for="@Model.Product.ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Product.ProductStock" class="control-label"></label>
+                <input asp-for="@Model.Product.ProductStock" class="form-control" />
+                <span asp-validation-for="@Model.Product.ProductStock" class="text-danger"></span>
+            </div>
+            <div  class="form-group">
+                <label asp-for="@Model.Product.Description" class="control-label"></label>
+                <textarea id="Description" asp-for="@Model.Product.Description" class="form-control">
+
+                </textarea>
+                <span asp-validation-for="@Model.Product.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Kategori</label>
+                @Html.DropDownListFor(model => model.Product.CategoryId, 
+                    new SelectList(ViewBag.Categories, "Value", "Text"), 
+                    htmlAttributes: new { @class = "form-control" })
+               
+                <span asp-validation-for="@Model.Product.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Para birimi</label>
+                <select name="UnitPrice" asp-items="Html.GetEnumSelectList<UnitPrice>()" class="form-control">
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Ürün Fiyat</label>
+                <input type="hidden" asp-for="@Model.Price.PriceId"  class="form-control" />
+                <input asp-for="@Model.Price.Price" type="text" class="form-control" />
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label">Ürüne ait resimler</label>
+                <div class="form-group">
+                @foreach (var img in Model.Images)
+                {
+                <div id="@img.ImageId" style="display:inline-block;">
+                   @if(img!=null){
+                        <img src="data:image/png;base64,@Convert.ToBase64String(img.Image)" style="margin:5px;height:100px;width:120px;" />
+                   }
+                   else{
+                        <img src="~/images/no-image.png" style="margin:5px;height:100px;width:120px;" />
+                   }
+                   <div>
+                     <button id="sil" data-id="@img.ImageId" class="btn btn-danger">Sil</button>
+                   </div>
+               </div>
+                }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Resim</label>
+                <input type="file" multiple id="img" name="img" class="form-control" />
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Değiştir" class="btn btn-primary" />
+                <a class="btn btn-primary" asp-action="Index">Anasayfa</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/ckeditor/ckeditor.js"></script>
+
+<script type="text/javascript">
+    $(document).on('click', '#sil', function () {     
+       
+            var imageId = $(this).attr("data-id");
+            $.ajax({
+                url: "@Url.Action("ImageDelete")",
+                data: { imageId: imageId },
+                type: "POST",
+                success: function (data) {
+                    $("div#" + imageId).remove(); // ilgili div(resim ve button) sil
+                }
+            });
+    });
+
+</script>
+<script type="text/javascript">
+     CKEDITOR.replace('Description');
+</script>
+

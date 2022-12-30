@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Shoper.Entities.ProductDiscount>
+
+@{
+    ViewData["Title"] = "Discounts";
+}
+
+<h4>Ürün İndirimleri</h4>
+
+<p>
+    <a asp-action="CreateNewDiscount" asp-route-productId="@ViewBag.productId" class="btn btn-success">Yeni İndirim</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductDiscountId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountRate)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr id="@item.ProductDiscountId" class="@(item.Status==true?"table-success":"table-warning")">
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductDiscountId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiscountRate)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+               @Html.ActionLink("Düzenle", "EditDiscount", new {  id=item.ProductDiscountId },new{@class="btn btn-warning"}) |
+               <a id="sil" data-id="@item.ProductDiscountId" href="javascript:void(0);" class="btn btn-danger">Sil</a>
+              
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).on('click','#sil',function () {
+       
+            var discountId = $(this).attr("data-id");
+            $.ajax({
+                url: "@Url.Action("DeleteDiscount")",
+                data: { id: discountId },
+                type: "POST",
+                success: function (data) {
+                $("tr#" + discountId).remove();
+                }
+            });      
+
+    });
+</script>

@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Shoper.Entities.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h5>Ürünler</h5>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">Yeni Ürün</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductStock)
+            </th>
+          
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr id="@item.ProductId">
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductStock)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductCategory.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Özellikler", "Items", new { id=item.ProductId },new{@class="btn btn-dark"})
+                @Html.ActionLink("Fiyat Geçmişi", "PriceHistory", new { id=item.ProductId },new{@class="btn btn-success"})
+                @Html.ActionLink("İndirimler", "Discounts", new { id=item.ProductId },new{@class="btn btn-primary"})
+                @Html.ActionLink("Yorumlar", "Comments", new { id=item.ProductId },new{@class="btn btn-secondary"})
+                @Html.ActionLink("Düzenle", "Edit", new { id=item.ProductId },new{@class="btn btn-warning"})
+                
+                <a class="btn btn-danger text-white" href="javascript:void(0);" data-id="@item.ProductId" id="sil">Sil</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(document).on('click', '#sil', function () {
+        var response=confirm('Bu ürün ve ona ait tüm bilgiler siliencektir.Emin misiniz?');
+        var id = $(this).attr("data-id");
+        if(response==true){
+            $.ajax({
+                url: "@Url.Action("Delete")",
+                data: { id: id },
+                type: "POST",
+                success: function (data) {
+                    $("tr#" + id).remove();
+                }
+            });
+        }
+        
+    });
+</script>
